@@ -1,0 +1,23 @@
+﻿@page
+@model TraCuu.GiamKichSan.Pages.WorkCategory.IndexModel
+<div class="container">
+    <h2>Thêm mới</h2>
+    <p>Danh sách công việc</p>
+    <div class="panel-group">
+        <form class="panel panel-default" enctype="multipart/form-data" method="post">
+            <div class="panel-body">
+                <div class="form-group">
+                    <label for="alias">ID:</label>
+                    <input type="text" class="form-control" name="id" value="@Model.workCategoryEntity.ID" disabled="disabled">
+                </div>
+                <div class="form-group">
+                    <label for="name">Họ và Tên:</label><span class="text-danger">*</span>
+                    <input type="text" class="form-control" name="name" value="@Model.workCategoryEntity.Name" maxlength="200" required>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>

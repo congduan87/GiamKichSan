@@ -19,16 +19,11 @@ namespace TraCuu.GiamKichSan.Pages.FamousPeople
             _logger = logger;
             Common.CntGlobal.traCuuDbContext = context;
         }
-        public IActionResult OnGet(string term, int status)
+        public void OnGet(int status)
         {
             ViewData["Title"] = "người nổi tiếng";
-            personCommunitiesModel = new List<PersonCommunityModel>();
-            if (!string.IsNullOrWhiteSpace(term))
-            {
-                personCommunitiesModel = personCommunityServices.GetAll(x => x.IsShow && (x.Name.Contains(term) || x.Alias.Contains(term)));
-                IsNull = personCommunitiesModel == null && personCommunitiesModel.Count == 0;
-            }
-            return RedirectToPage("/Index");
+            personCommunitiesModel = personCommunityServices.GetAll(x => x.IsShow != true);
+            IsNull = personCommunitiesModel == null && personCommunitiesModel.Count == 0;
         }
     }
 }

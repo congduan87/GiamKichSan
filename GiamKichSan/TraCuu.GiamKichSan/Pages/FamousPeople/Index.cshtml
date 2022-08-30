@@ -1,4 +1,50 @@
 ﻿@page
 @model TraCuu.GiamKichSan.Pages.FamousPeople.IndexModel
-@{
-}
+<form class="panel panel-primary" method="get">
+    <div class="panel-heading"></div>
+    <div class="panel-body">
+        <div class="row form-group">
+            <div class="col-md-6 col-sm-8">
+                <input type="tel" class="form-control" name="term" value="" placeholder="Tra cứu">
+            </div>
+            <div class="col-md-2 col-sm-4">
+                <button type="submit" class="btn btn-primary mb-2">Tìm kiếm</button>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover table-condensed">
+        <thead>
+            <tr style="background-color: #104e8b; color: #e49b0f; text-align:center">
+                <th style="width:50px">STT</th>
+                <th style="width:50px">Ảnh</th>
+                <th style="width:100px">Bí danh</th>
+                <th style="width:150px">Tên đầy đủ</th>
+                <th style="width:70px">Ngày sinh</th>
+                <th style="width:200px">Nơi sinh</th>
+                <th style="width:70px">Wikipedia</th>
+                <th style="width:70px"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ var index = 0;}
+            @foreach (var item in Model.personCommunitiesModel)
+            {
+                <tr>
+                    @{ index++;}
+                    <td>@index</td>
+                    <td>
+                        <img src="@item.Image" style="width:100%; height:100%; padding:0; margin:0;" />
+                    </td>
+                    <td>@item.Alias</td>
+                    <td>@item.Name</td>
+                    <td>@item.Birthday</td>
+                    <td>@item.Address</td>
+                    <td><a href="@item.Wikipedia.Replace("\"", "\\\" ")">@(string.IsNullOrWhiteSpace(item.Wikipedia) ?"":"click here")</a></td>
+                    <td><a href="\FamousPeople\Update?ID=@item.ID">Chỉnh sửa</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

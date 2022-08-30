@@ -1,0 +1,70 @@
+﻿@page
+@model TraCuu.GiamKichSan.Pages.FamousPeople.UpdateModel
+<div class="container">
+    <h2>Thêm mới</h2>
+    <p>Thông tin những người nổi tiếng</p>
+    <div class="panel-group">
+        <form class="panel panel-default" enctype="multipart/form-data" method="post">
+            <div class="panel-body">
+                <div class="form-group">
+                    <label for="alias">Bí danh:</label><span class="text-danger">*</span>
+                    <input type="text" class="form-control" name="alias" value="@Model.personCommunityModel.Alias" maxlength="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">Họ và Tên:</label><span class="text-danger">*</span>
+                    <input type="text" class="form-control" name="name" value="@Model.personCommunityModel.Name" maxlength="200" required>
+                </div>
+                <div class="form-group">
+                    <label for="birthday">Ngày sinh:</label><span class="text-danger">*</span>
+                    <input type="date" class="form-control" name="birthday" value="@Model.personCommunityModel.Birthday" maxlength="22" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Nơi sinh:</label><span class="text-danger">*</span>
+                    <input type="text" class="form-control" name="address" value="@Model.personCommunityModel.Address" maxlength="500" required>
+                </div>
+                <div class="form-group">
+                    <label for="workCategoryID">Nghề nghiệp:</label><span class="text-danger">*</span>
+                    <select class="form-control" name="workCategoryID">
+                        <option value="">----</option>
+                        @foreach (var item in Model.workCategoriesEntity)
+                        {
+                            if (item.ID == Model.personCommunityModel.WorkCategoryID)
+                            {
+                                <option value="@item.ID" selected>@item.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.ID">@item.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="facebook">Facebook</label>
+                    <input type="text" class="form-control" name="facebook" value="@Model.personCommunityModel.Facebook" maxlength="500">
+                </div>
+                <div class="form-group">
+                    <label for="youtube">Youtube</label>
+                    <input type="text" class="form-control" name="youtube" value="@Model.personCommunityModel.Youtube" maxlength="500">
+                </div>
+                <div class="form-group">
+                    <label for="tiktok">Tiktok</label>
+                    <input type="text" class="form-control" name="tiktok" value="@Model.personCommunityModel.Tiktok" maxlength="500">
+                </div>
+                <div class="form-group">
+                    <label for="wikipedia">Wikipedia</label>
+                    <input type="text" class="form-control" name="wikipedia" value="@Model.personCommunityModel.Wikipedia" maxlength="500">
+                </div>
+                <div class="form-group">
+                    <label>Image</label>
+                    <img src="@Model.personCommunityModel.Image" style="width: 100px; height: 100px" />
+                </div>
+            </div>
+            <div class="panel-footer">
+                <br />
+                <input type="hidden" name="id" value="@Model.personCommunityModel.ID" />
+                <button type="submit" class="btn btn-primary mb-2">Duyệt</button>
+            </div>
+        </form>
+    </div>
+</div>

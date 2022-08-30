@@ -36,11 +36,9 @@ namespace TraCuu.GiamKichSan.Pages.FamousPeople
             else
                 personCommunityModel = personCommunityServices.GetByID(ID);
         }
-
-        
-        
         public IActionResult OnPost(PersonCommunityModel personCommunityModel)
 		{
+            personCommunityModel.IsShow = false;
             this.personCommunityModel = personCommunityModel;
             workCategoriesEntity = workCategoryServices.GetAll();
 			if (!ModelState.IsValid)
@@ -56,7 +54,7 @@ namespace TraCuu.GiamKichSan.Pages.FamousPeople
                 }
                 return Page();
 			}
-			personCommunityModel.Image = string.Join(", ", Helpers.UploadFile(FileUploads));
+            personCommunityModel.Image = string.Join(", ", Helpers.UploadFiles(FileUploads, personCommunityModel.WorkCategoryID.ToString()));
 
             if (personCommunityModel.ID != 0)
 			{
