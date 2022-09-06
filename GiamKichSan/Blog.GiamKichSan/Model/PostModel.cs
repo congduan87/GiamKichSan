@@ -16,6 +16,7 @@ namespace Blog.GiamKichSan.Model
 		public string TagName { get; set; }
 		[NotMapped]
 		public List<PostDetailEntity> PostDetails { get; set; } = new List<PostDetailEntity>();
-
+		[NotMapped]
+		public string PostDetailName { get; set; }
 	}
 }

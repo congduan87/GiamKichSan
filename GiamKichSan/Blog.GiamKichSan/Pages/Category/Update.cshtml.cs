@@ -32,7 +32,7 @@ namespace Blog.GiamKichSan.Pages.Category
 			{
                 ViewData["Title"] = "Cập nhật";
                 categoryEntity = categoryServices.GetByID(ID);
-                parentcategoryEntity = categoryServices.GetAll(x=>x.ID != ID);
+                parentcategoryEntity = categoryServices.GetAll(x=>x.ID == categoryEntity.IDParent);
             }                
         }
         public IActionResult OnPost(CategoryEntity categoryEntity)

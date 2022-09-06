@@ -12,8 +12,7 @@ namespace Blog.GiamKichSan.Entities
 	{
 		[Key]
 		public int ID { get; set; }
-		[Required]
-		public int IDParent { get; set; }
+		public int? IDParent { get; set; }
 		[MaxLength(500)]
 		[Required]
 		public string Name { get; set; }

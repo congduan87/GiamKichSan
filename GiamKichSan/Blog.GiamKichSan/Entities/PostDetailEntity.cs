@@ -15,6 +15,7 @@ namespace Blog.GiamKichSan.Entities
 		[Required]
 		public int IDPost { get; set; }
 		[Required]
-		public int Description { get; set; }		
+		[MaxLength(4000)]
+		public string Description { get; set; }		
 	}
 }
