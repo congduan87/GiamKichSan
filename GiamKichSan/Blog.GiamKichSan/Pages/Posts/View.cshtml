@@ -1,0 +1,10 @@
+﻿@page
+@model Blog.GiamKichSan.Pages.Posts.ViewModel
+<div class="container">
+    <h3 class="align-center" contenteditable="false" data-theme="0">@Model.postModel.Title</h3>
+    <p style="text-align:left"><br><em>@Model.postModel.Description</em></p>
+    @foreach (var postDetail in Model.postModel.PostDetails)
+    {
+        @Html.Raw(System.Net.WebUtility.HtmlDecode(postDetail.Description))
+    }
+</div>

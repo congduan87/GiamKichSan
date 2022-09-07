@@ -25,19 +25,36 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="IDTag">Tag:</label>
-                    <input type="text" class="form-control" name="IDTag" value="@Model.postModel.IDTag">
+                    <label for="IDTag">
+                        Tag:<span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" name="IDTag" required value="@Model.postModel.IDTag">
                 </div>
                 <div class="form-group">
-                    <label for="name">Nội dung:</label>
+                    <label for="IDTag">
+                        Tiêu đề:<span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" name="Title" required value="@Model.postModel.Title">
+                </div>
+                <div class="form-group">
+                    <label for="IDTag">
+                        Tóm tắt:<span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" name="Description" required value="@Model.postModel.Description">
+                </div>
+                <div class="form-group">
+                    <label for="name">
+                        Nội dung:<span class="text-danger">*</span>
+                    </label>
                     <div class="toolbar-container"></div>
-                    <div id="PostDetailName" name="PostDetailName">
+                    <div id="PostDetailName">
                         <p><i>Nhập nội dung ở đây</i></p>
                         @foreach (var postDetail in Model.postModel.PostDetails)
                         {
                             @Html.Raw(System.Net.WebUtility.HtmlDecode(postDetail.Description))
                         }
                     </div>
+                    <input type="hidden" name="PostDetailsDescription" />
                 </div>
             </div>
             <div class="panel-footer">
@@ -49,36 +66,27 @@
 </div>
 @section Scripts{
     <script>
+        let editorPostDetail = document.querySelector('#PostDetailName');
+        let editorClass = document.querySelector('main .toolbar-container');
+        let $postDetail = $('input[name=PostDetailsDescription]');
+        editorPostDetail.addEventListener('blur', function () {
+            let array = [];
+            editorPostDetail.childNodes.forEach(function (item) {
+                array.push(item.innerHTML);
+            });
+            $postDetail[0].value = JSON.stringify(array);
+        });
         DecoupledEditor
-            .create(document.querySelector('#PostDetailName'), {
+            .create(editorPostDetail, {
                 // toolbar: [ 'heading', '|', 'bold', 'italic', 'link' ]
             })
             .then(editor => {
-                const toolbarContainer = document.querySelector('main .toolbar-container');
-                toolbarContainer.prepend(editor.ui.view.toolbar.element);
+                editorClass.prepend(editor.ui.view.toolbar.element);
                 window.editor = editor;
-                this.focus();
+                editorPostDetail.focus();
             })
             .catch(err => {
                 console.error(err.stack);
             });
-
-        //$('button[type=submit]').click(function (evt) {
-        //    evt.preventDefault();
-        //    let $this = $(this);
-        //    let data = {
-        //        "IDCategory": $("select[name=IDCategory]")[0].value,
-        //        "IDTag": $("input[name=IDTag]")[0].value,
-        //        "PostDetails": $("div[name=PostDetails]").children().map(function (index, item) {
-        //            return { "description": item.innerHTML };
-        //        })
-        //    };
-        //    $.ajax({
-        //        url: location.href,
-        //        type: 'POST',
-        //        data: data,
-        //        contentType: 'application/json',
-        //    });
-        //});
     </script>
 }

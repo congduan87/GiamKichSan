@@ -7,6 +7,7 @@ using Blog.GiamKichSan.Data;
 using Blog.GiamKichSan.Entities;
 using Blog.GiamKichSan.Enum;
 using Blog.GiamKichSan.Model;
+using Newtonsoft.Json;
 
 namespace Blog.GiamKichSan.Services
 {
@@ -61,16 +62,26 @@ namespace Blog.GiamKichSan.Services
 				return _tagData;
 			}
 		}
+		private bool UpdatePostDetails(int iDPost, String[] descriptions)
+		{
+			foreach (var description in descriptions)
+			{
+				var arraytem = JsonConvert.DeserializeObject<List<String>>(description);
+				foreach (var item in arraytem)
+				{
+					if (postDetailData.Insert(new PostDetailEntity()
+					{
+						IDPost = iDPost,
+						Description = item
+					}) <= 0) return false;
+				}
+			}
+			return true;
+		}
 		public int Insert(PostModel item)
 		{
 			var IDPost = postData.Insert(item);
-			int IDPostDetail = 0;
-			if (IDPost <= 0) return -1;
-			foreach (var postDetail in item.PostDetails)
-			{
-				IDPostDetail = postDetailData.Insert(postDetail);
-				if (IDPostDetail <= 0) return -1;
-			}
+			if (UpdatePostDetails(IDPost, item.PostDetailsDescription)) return -1;
 			return IDPost;
 		}
 
@@ -86,11 +97,7 @@ namespace Blog.GiamKichSan.Services
 					postDetailData.Delete(postDetail);
 				}
 			}
-			foreach (var postDetail in item.PostDetails)
-			{
-				if (postDetailData.Insert(postDetail) <= 0) return false;
-			}
-			return true;
+			return UpdatePostDetails(item.ID, item.PostDetailsDescription);
 		}
 
 		public bool Delete(PostModel item)
@@ -137,7 +144,7 @@ namespace Blog.GiamKichSan.Services
 		}
 		private PostModel RenderPostModel(PostEntity post, List<PostDetailEntity> postDetail, CategoryEntity category, List<TagEntity> tag)
 		{
-			PostModel result = post as PostModel;
+			PostModel result = new PostModel(post);
 			result.CategoryName = category.Name;
 			result.TagName = string.Join(", ", tag.Select(x => x.Name).ToArray());
 			result.PostDetails = postDetail;

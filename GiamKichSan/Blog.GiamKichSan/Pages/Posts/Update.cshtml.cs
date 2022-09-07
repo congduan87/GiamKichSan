@@ -40,10 +40,10 @@ namespace Blog.GiamKichSan.Pages.Posts
         public IActionResult OnPost(PostModel postModel)
         {
             this.postModel = postModel;
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return Page();
+            //}
             if (this.postModel.ID != 0)
             {
                 postServices.Edit(this.postModel);
