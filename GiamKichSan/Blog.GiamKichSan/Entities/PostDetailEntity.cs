@@ -13,9 +13,16 @@ namespace Blog.GiamKichSan.Entities
 		[Key]
 		public int ID { get; set; }
 		[Required]
+		public int IDParent { get; set; }
+		[Required]
 		public int IDPost { get; set; }
 		[Required]
 		[MaxLength(4000)]
-		public string Description { get; set; }		
+		public string Description { get; set; }
+		[MaxLength(10)]
+		public string TagName { get; set; }
+		public bool IsTagClose { get; set; }
+		[MaxLength(200)]
+		public string TagAttribute { get; set; }
 	}
 }

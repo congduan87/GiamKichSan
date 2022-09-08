@@ -64,17 +64,39 @@ namespace Blog.GiamKichSan.Services
 		}
 		private bool UpdatePostDetails(int iDPost, String descriptions)
 		{
-			var arraytem = JsonConvert.DeserializeObject<List<String>>(descriptions);
-			foreach (var item in arraytem)
+			var arrayItem = JsonConvert.DeserializeObject<List<PostDetailModel>>(descriptions);
+			if (arrayItem == null || arrayItem.Count == 0) return true;
+
+			arrayItem.ForEach(item => item.IDPost = iDPost);
+
+			var rootItems = arrayItem.FindAll(x => x.IDParent == 0);
+			foreach (var rootItem in rootItems)
 			{
-				if (postDetailData.Insert(new PostDetailEntity()
-				{
-					IDPost = iDPost,
-					Description = item
-				}) <= 0) return false;
+				if (!UpdatePostDetailChildrens(0, rootItem, arrayItem)) return false;
 			}
 			return true;
 		}
+		private bool UpdatePostDetailChildrens(int iDParent, PostDetailModel rootItem, List<PostDetailModel> arrayItem)
+		{
+			var IDRoot = postDetailData.Insert(new PostDetailEntity()
+			{
+				IDPost = rootItem.IDPost,
+				Description = rootItem.Description,
+				IDParent = iDParent,
+				TagName = rootItem.TagName,
+				IsTagClose = rootItem.IsTagClose,
+				TagAttribute = rootItem.TagAttribute,
+			});
+			if (IDRoot <= 0) return false;
+
+			var childItems = arrayItem.FindAll(x => x.IDParent == rootItem.ID);
+			foreach (var childItem in childItems)
+			{
+				if (!UpdatePostDetailChildrens(IDRoot, childItem, arrayItem)) return false;
+			}
+			return true;
+		}
+
 		public int Insert(PostModel item)
 		{
 			var IDPost = postData.Insert(item);
@@ -144,6 +166,8 @@ namespace Blog.GiamKichSan.Services
 			PostModel result = new PostModel(post);
 			result.CategoryName = category.Name;
 			result.TagName = string.Join(", ", tag.Select(x => x.Name).ToArray());
+
+
 			result.PostDetails = postDetail;
 			return result;
 		}
