@@ -2,32 +2,61 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+    Layout = null;
 }
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<div class="container-fluid">
+    <div class="row">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <div class="toolbar-container"></div>
-    <div id="editor">
+        <div class="col-md-9 col-md-push-3">.col-md-9 .col-md-push-3</div>
+
+        <div class="col-md-3 col-md-pull-9">.col-md-3 .col-md-pull-9</div>
 
     </div>
 </div>
+<h1>h1. Bootstrap heading <small>Secondary text</small></h1>
 
-@section Scripts{ 
-    <script>
-        DecoupledEditor
-            .create(document.querySelector('#editor'), {
-                // toolbar: [ 'heading', '|', 'bold', 'italic', 'link' ]
-            })
-            .then(editor => {
-                const toolbarContainer = document.querySelector('main .toolbar-container');
+<h2>h2. Bootstrap heading <small>Secondary text</small></h2>
 
-                toolbarContainer.prepend(editor.ui.view.toolbar.element);
+<h3>h3. Bootstrap heading <small>Secondary text</small></h3>
 
-                window.editor = editor;
-            })
-            .catch(err => {
-                console.error(err.stack);
-            });
-    </script>
-}
+<h4>h4. Bootstrap heading <small>Secondary text</small></h4>
 
+<h5>h5. Bootstrap heading <small>Secondary text</small></h5>
+
+<h6>h6. Bootstrap heading <small>Secondary text</small></h6>
+
+<p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.</p>
+<p class="lead">Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.<strong>rendered as bold text<em>rendered as italicized text</em></strong></p>
+
+<section class="news-main">
+    <p class="main-title">Issues & Plans</p>
+    <div class="main-abbreviate">
+        Quisque efficitur ipsum ante, eu pretium neque tristique vitae.
+        Donec ac ipsum in lorem molestie.
+    </div>
+    <nav class="main-description">
+        <div class="main-description-left">
+            <p><img title="Học Web Chuẩn" /></p>
+            <p class="news-title">Turkey Will Continues To Make Structure Economic Reforms</p>
+            <div class="news-description">
+                <p>Quisque efficitur ipsum ante, eu pretium neque tristique vitae. Donec ac ipsum in lorem molestie vestibulum ornare eu nibh. Donec ac velit.</p>
+                <p>Praesent commodo nunc eros. Vivamus iaculis eleifend est, non blandit risus interdum id.</p>
+            </div>
+        </div>
+        <div class="main-description-right">
+            <ul class="news-main-info">
+                <li>
+                    <p class="news-image"><img /></p>
+                    <section class="news-info">
+                        <p class="news-title-small"></p>
+                        <div class="news-description-small">
+                            Etiam cras ac sapien ipsum. Morbi scelerisque efficitur nibh a fringilla. Nam et diam vel justo praesent rhoncus volutpat turpis vitae hendrerit.
+                        </div>
+                    </section>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+</section>

@@ -1,0 +1,28 @@
+﻿@page
+@model Blog.GiamKichSan.Pages.Login.IndexModel
+@{ 
+    Layout = null;
+}
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<section style="width:800px; margin:50px auto; font-weight:400; font-size:18px;">
+    <form role="form" class="form-horizontal" method="post">
+        <div class="form-group">
+            <label for="Email">
+                Email:
+            </label>
+            <input type="text" name="Email" class="form-control" placeholder="Email" autocomplete="off" value="@Model.Email"/>
+        </div>
+        <div class="form-group">
+            <label for="Password">
+                Password:
+            </label>
+            <input type="password" name="Password" class="form-control" autocomplete="off"  value="@Model.Password"/>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" /> Remember
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</section>
