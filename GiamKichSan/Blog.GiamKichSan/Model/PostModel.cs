@@ -17,14 +17,14 @@ namespace Blog.GiamKichSan.Model
 		[NotMapped]
 		public List<PostDetailEntity> PostDetails { get; set; } = new List<PostDetailEntity>();
 		[NotMapped]
-		public string[] PostDetailsDescription { get; set; }
+		public string PostDetailsDescription { get; set; }
 
 		public PostModel():base()
 		{
 			this.CategoryName = "";
 			this.TagName = "";
 			this.PostDetails = new List<PostDetailEntity>();
-			this.PostDetailsDescription = new string[] { };
+			this.PostDetailsDescription = "";
 		}
 
 		public PostModel(PostEntity postEntity)

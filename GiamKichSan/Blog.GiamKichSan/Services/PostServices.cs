@@ -62,19 +62,16 @@ namespace Blog.GiamKichSan.Services
 				return _tagData;
 			}
 		}
-		private bool UpdatePostDetails(int iDPost, String[] descriptions)
+		private bool UpdatePostDetails(int iDPost, String descriptions)
 		{
-			foreach (var description in descriptions)
+			var arraytem = JsonConvert.DeserializeObject<List<String>>(descriptions);
+			foreach (var item in arraytem)
 			{
-				var arraytem = JsonConvert.DeserializeObject<List<String>>(description);
-				foreach (var item in arraytem)
+				if (postDetailData.Insert(new PostDetailEntity()
 				{
-					if (postDetailData.Insert(new PostDetailEntity()
-					{
-						IDPost = iDPost,
-						Description = item
-					}) <= 0) return false;
-				}
+					IDPost = iDPost,
+					Description = item
+				}) <= 0) return false;
 			}
 			return true;
 		}
