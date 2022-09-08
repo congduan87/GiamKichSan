@@ -22,6 +22,6 @@ namespace Blog.GiamKichSan.Entities
 		public int IDCategory { get; set; }
 		[Required]
 		public string IDTag { get; set; }
-		public bool IsShow { get; set; }
+		public bool IsShow { get; set; } = false;
 	}
 }

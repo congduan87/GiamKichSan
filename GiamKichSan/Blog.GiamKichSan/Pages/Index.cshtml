@@ -2,61 +2,77 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
-    Layout = null;
 }
-<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-<div class="container-fluid">
-    <div class="row">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
 
-        <div class="col-md-9 col-md-push-3">.col-md-9 .col-md-push-3</div>
+    ul {
+        list-style: none;
+    }
 
-        <div class="col-md-3 col-md-pull-9">.col-md-3 .col-md-pull-9</div>
+    .clearfix {
+        zoom: 1;
+    }
 
-    </div>
-</div>
-<h1>h1. Bootstrap heading <small>Secondary text</small></h1>
+        .clearfix:after {
+            clear: both;
+            content: ".";
+            display: block;
+            height: 0;
+            line-height: 0;
+            visibility: hidden;
+        }
 
-<h2>h2. Bootstrap heading <small>Secondary text</small></h2>
+    .news-main {
+        width: 850px;
+        margin: 10px auto;
+    }
+    .info-list li {
+        border-bottom: 1px dashed #f44336;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+    }
+        .info-list li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
 
-<h3>h3. Bootstrap heading <small>Secondary text</small></h3>
+    .image {
+        float: left;
+        width: 100px;
+    }
 
-<h4>h4. Bootstrap heading <small>Secondary text</small></h4>
+        .image img {
+            border-radius: 6px;
+        }
 
-<h5>h5. Bootstrap heading <small>Secondary text</small></h5>
+    .detail {
+        float: right;
+        padding-top: 3px;
+        width: 620px;
+    }
 
-<h6>h6. Bootstrap heading <small>Secondary text</small></h6>
-
-<p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.</p>
-<p class="lead">Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.<strong>rendered as bold text<em>rendered as italicized text</em></strong></p>
-
+        .detail h3 {
+            color: #1f1f1f;
+            margin-bottom: 6px;
+            font-size: 18px;
+        }
+</style>
 <section class="news-main">
-    <p class="main-title">Issues & Plans</p>
-    <div class="main-abbreviate">
-        Quisque efficitur ipsum ante, eu pretium neque tristique vitae.
-        Donec ac ipsum in lorem molestie.
-    </div>
-    <nav class="main-description">
-        <div class="main-description-left">
-            <p><img title="Học Web Chuẩn" /></p>
-            <p class="news-title">Turkey Will Continues To Make Structure Economic Reforms</p>
-            <div class="news-description">
-                <p>Quisque efficitur ipsum ante, eu pretium neque tristique vitae. Donec ac ipsum in lorem molestie vestibulum ornare eu nibh. Donec ac velit.</p>
-                <p>Praesent commodo nunc eros. Vivamus iaculis eleifend est, non blandit risus interdum id.</p>
-            </div>
-        </div>
-        <div class="main-description-right">
-            <ul class="news-main-info">
-                <li>
-                    <p class="news-image"><img /></p>
-                    <section class="news-info">
-                        <p class="news-title-small"></p>
-                        <div class="news-description-small">
-                            Etiam cras ac sapien ipsum. Morbi scelerisque efficitur nibh a fringilla. Nam et diam vel justo praesent rhoncus volutpat turpis vitae hendrerit.
-                        </div>
-                    </section>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
+    <ul class="info-list">
+        @foreach (var postModel in Model.postsModel)
+        {
+            <li class="clearfix">
+                <div class="image"><img src="../images/img_100x100.png" alt="@postModel.Title"></div>
+                <section class="detail">
+                    <h3><a href="\Posts\View?ID=@postModel.ID">@postModel.Title</a></h3>
+                    <p>@postModel.Description</p>
+                </section>
+            </li>
+        }
+    </ul>
 </section>

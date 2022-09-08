@@ -25,7 +25,7 @@ namespace Blog.GiamKichSan
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddRazorPages();
-			services.AddDbContext<BlogDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BlogsDBConnection")));
+			services.AddDbContext<BlogDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BlogDBConnection")));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
