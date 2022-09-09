@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Blog.GiamKichSan.Model
 {
-	public class PostModel: PostEntity
+	public class PostModel : PostEntity
 	{
 		[NotMapped]
 		public string CategoryName { get; set; }
@@ -19,7 +19,7 @@ namespace Blog.GiamKichSan.Model
 		[NotMapped]
 		public string PostDetailsDescription { get; set; }
 
-		public PostModel():base()
+		public PostModel() : base()
 		{
 			this.CategoryName = "";
 			this.TagName = "";

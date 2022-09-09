@@ -167,23 +167,24 @@ namespace Blog.GiamKichSan.Services
 			result.CategoryName = category.Name;
 			result.TagName = string.Join(", ", tag.Select(x => x.Name).ToArray());
 
-			var postDetailParent = postDetail.FindAll(x => x.IDParent != 0);
-			foreach (var item in postDetail.FindAll(x=> x.IDParent == 0))
+			var postDetailChild = postDetail.FindAll(x => x.IDParent != 0);
+			foreach (var item in postDetail.FindAll(x => x.IDParent == 0))
 			{
-				RenderPostModelChild(item, postDetailParent);
+				RenderPostModelChild(item, postDetailChild);
 			}
 			result.PostDetails = postDetail;
+			postDetail.RemoveAll(x => x.IDParent != 0);
 			return result;
 		}
 
 		private string RenderPostModelChild(PostDetailEntity parent, List<PostDetailEntity> postDetail)
 		{
-			if(parent.IsTagClose && postDetail.Any(x=>x.IDParent == parent.ID))
+			if (parent.IsTagClose && postDetail.Any(x => x.IDParent == parent.ID))
 			{
-				foreach (var item in postDetail.FindAll(x => x.IDParent == parent.ID))
+				var postChilds = postDetail.FindAll(x => x.IDParent == parent.ID);
+				foreach (var item in postChilds)
 				{
 					parent.Description += RenderPostModelChild(item, postDetail);
-					postDetail.Remove(item);
 				}
 				parent.Description = $"<{parent.TagName} {parent.TagAttribute}>{parent.Description}</{parent.TagName}>";
 			}

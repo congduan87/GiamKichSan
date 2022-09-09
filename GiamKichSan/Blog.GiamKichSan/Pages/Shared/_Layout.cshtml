@@ -21,11 +21,11 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Posts/Update">Tạo bài viết</a>
-                        </li>
                         @if (ViewData["Account"] != null)
                         {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Posts/Update">Tạo bài viết</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Category/Index">Danh mục</a>
                             </li>

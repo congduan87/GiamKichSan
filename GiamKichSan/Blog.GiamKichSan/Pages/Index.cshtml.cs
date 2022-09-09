@@ -21,7 +21,7 @@ namespace Blog.GiamKichSan.Pages
 			postServices = new PostServices();
 		}
 
-		public void OnGet(int category = 2)
+		public void OnGet(int category = 3)
 		{
 			postsModel = postServices.GetAll(x => x.IDCategory == category);
 		}
