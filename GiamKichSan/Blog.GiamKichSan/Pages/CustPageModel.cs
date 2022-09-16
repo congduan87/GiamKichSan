@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
 using System.IO;
 using System.Net;
 
@@ -7,55 +8,31 @@ namespace Blog.GiamKichSan.Pages
 	public class CustPageModel : PageModel
 	{
 		#region IPAddress
-		private string _Id { get; set; }
-		private string _LocalIpAddress { get; set; }
-		private string _InternetIpAddress { get; set; }
+		private string _IdRazorPage { get; set; }
+		private string _SeverIpAddress { get; set; }
 		private string _RemoteIpAddress { get; set; }
 		private string _Host { get; set; }
 
-		public string Id
+		public string IdRazorPage
 		{
 			get
 			{
-				if (_Id == null)
+				if (_IdRazorPage == null)
 				{
-					_Id = HttpContext.Connection.Id;
+					_IdRazorPage = HttpContext.Connection.Id;
 				}
-				return _Id;
+				return _IdRazorPage;
 			}
 		}
-		public string LocalIpAddress
+		public string SeverIpAddress
 		{
 			get
 			{
-				if (_LocalIpAddress == null)
+				if (_SeverIpAddress == null)
 				{
-					_LocalIpAddress = HttpContext.Connection.LocalIpAddress.ToString();
+					_SeverIpAddress = HttpContext.Connection.LocalIpAddress.ToString();
 				}
-				return _LocalIpAddress;
-			}
-		}
-		public string InternetIpAddress
-		{
-			get
-			{
-				if (_InternetIpAddress == null)
-				{
-					string address = "";
-					WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
-					using (WebResponse response = request.GetResponse())
-					using (StreamReader stream = new StreamReader(response.GetResponseStream()))
-					{
-						address = stream.ReadToEnd();
-					}
-
-					int first = address.IndexOf("Address: ") + 9;
-					int last = address.LastIndexOf("</body>");
-					address = address.Substring(first, last - first);
-
-					_InternetIpAddress = address;
-				}
-				return _InternetIpAddress;
+				return _SeverIpAddress;
 			}
 		}
 		public string RemoteIpAddress
@@ -81,6 +58,22 @@ namespace Blog.GiamKichSan.Pages
 			}
 		}
 		#endregion
+
+		#region Cookies
+		public string Token
+		{
+			get
+			{
+				return HttpContext.Request.Cookies["Token"].ToString();
+			}
+			set
+			{
+				HttpContext.Response.Cookies.Append("Token", value, new Microsoft.AspNetCore.Http.CookieOptions() { Expires = DateTime.Now.AddDays(15) });
+			}
+		}
+
+		#endregion
+
 		public CustPageModel() : base()
 		{
 
