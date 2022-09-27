@@ -57,16 +57,16 @@ namespace API.GiamKichSan.Common
 			return true;
 		}
 
-		public static async Task<string> UploadFile(IConfiguration config, IFormFile formFile, string directory)
+		public static async Task<string> UploadFile(FTPModel fTPModel, IFormFile formFile, string directory)
 		{
 			string fileName = "";
 			if (formFile.Length > 0)
 			{
-				var fTPUploadFile = new FTPUploadFile(config);
+				var fTPUploadFile = new FTPUploadFile(fTPModel);
 				var output = await fTPUploadFile.FileUpload(formFile.OpenReadStream(), formFile.Name, directory);
 				if(output.isValidate && Convert.ToBoolean(output.obj))
 				{
-					fileName = Path.Combine(directory, formFile.Name);
+					fileName = Path.Combine(directory, formFile.FileName);
 				}
 			}
 			return fileName;

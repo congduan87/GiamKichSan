@@ -1,5 +1,6 @@
 using API.GiamKichSan.Data;
 using API.GiamKichSan.SignalR;
+using API.GiamKichSan.UploadFile;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,7 @@ namespace API.GiamKichSan
 		{
 			services.AddControllers();
 			services.AddDbContext<GKSDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("GKSDbContext")));
+			services.Configure<FTPModel>(Configuration.GetSection("FTPUpload"));
 			services.AddSignalR(options => { options.KeepAliveInterval = System.TimeSpan.FromSeconds(5); }).AddMessagePackProtocol();
 			services.AddCors(options =>
 			{

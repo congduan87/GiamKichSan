@@ -1,10 +1,12 @@
 ﻿using API.GiamKichSan.Common;
 using API.GiamKichSan.SignalR;
+using API.GiamKichSan.UploadFile;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +20,11 @@ namespace API.GiamKichSan.Controllers
 	public class TestController : ControllerBase
 	{
 		private IHubContext<SignalrHub, IHubClient> _signalrHub;
-		private IConfiguration _config;
-		public TestController(IHubContext<SignalrHub, IHubClient> signalrHub, IConfiguration config)
+		private FTPModel _settings;
+		public TestController(IHubContext<SignalrHub, IHubClient> signalrHub, IOptions<FTPModel> settings)
 		{
 			_signalrHub = signalrHub;
-			this._config = config;
+			this._settings = settings.Value;
 		}
 
 		//[HttpPost]
@@ -43,9 +45,9 @@ namespace API.GiamKichSan.Controllers
 		//}
 
 		[HttpPost]
-		public async Task<string> Post([FromBody] UploadFileAPI upLoadFile)
+		public async Task<string> Post(IFormFile formFile)
 		{
-			var retMessage = await Helpers.UploadFile(_config, upLoadFile.formFile, "DuanVC");			
+			var retMessage = await Helpers.UploadFile(_settings, formFile, "DuanVC");			
 			return retMessage;
 		}
 

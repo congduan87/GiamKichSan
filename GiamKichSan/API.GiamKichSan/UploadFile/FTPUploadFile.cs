@@ -17,6 +17,10 @@ namespace API.GiamKichSan.UploadFile
 		{
 			fTPModel = config.GetValue<FTPModel>("FTPUpload");
 		}
+		public FTPUploadFile(FTPModel fTPModel)
+		{
+			this.fTPModel = fTPModel;
+		}
 		public ResObject ExistsDirectory(string fileFolder = "")
 		{
 			ResObject output = new ResObject();
@@ -136,7 +140,7 @@ namespace API.GiamKichSan.UploadFile
 				}
 
 				output = CreateDirectory(directoryServer);
-				if (!output.isValidate || Convert.ToBoolean(output.obj))
+				if (!output.isValidate || !Convert.ToBoolean(output.obj))
 				{
 					return output;
 				}
