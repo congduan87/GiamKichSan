@@ -1,7 +1,10 @@
-﻿using API.GiamKichSan.SignalR;
+﻿using API.GiamKichSan.Common;
+using API.GiamKichSan.SignalR;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,28 +18,36 @@ namespace API.GiamKichSan.Controllers
 	public class TestController : ControllerBase
 	{
 		private IHubContext<SignalrHub, IHubClient> _signalrHub;
-		public TestController(IHubContext<SignalrHub, IHubClient> signalrHub)
+		private IConfiguration _config;
+		public TestController(IHubContext<SignalrHub, IHubClient> signalrHub, IConfiguration config)
 		{
 			_signalrHub = signalrHub;
+			this._config = config;
 		}
+
+		//[HttpPost]
+		//public async Task<string> Post([FromBody] MessageModel msg)
+		//{
+		//	var retMessage = string.Empty;
+		//	try
+		//	{
+		//		msg.Timestamp = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_ffff");
+		//		await _signalrHub.Clients.All.BroadcastMessage(msg);
+		//		retMessage = "Success";
+		//	}
+		//	catch (Exception e)
+		//	{
+		//		retMessage = e.ToString();
+		//	}
+		//	return retMessage;
+		//}
 
 		[HttpPost]
-		public async Task<string> Post([FromBody] MessageModel msg)
+		public async Task<string> Post([FromBody] UploadFileAPI upLoadFile)
 		{
-			var retMessage = string.Empty;
-			try
-			{
-				msg.Timestamp = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_ffff");
-				await _signalrHub.Clients.All.BroadcastMessage(msg);
-				retMessage = "Success";
-			}
-			catch (Exception e)
-			{
-				retMessage = e.ToString();
-			}
+			var retMessage = await Helpers.UploadFile(_config, upLoadFile.formFile, "DuanVC");			
 			return retMessage;
 		}
-
 
 		private static readonly string[] Summaries = new[]
 		{
@@ -55,6 +66,11 @@ namespace API.GiamKichSan.Controllers
 			})
 			.ToArray();
 		}
+	}
+
+	public class UploadFileAPI
+	{
+		public IFormFile formFile { get; set; }
 	}
 
 	public class WeatherForecast

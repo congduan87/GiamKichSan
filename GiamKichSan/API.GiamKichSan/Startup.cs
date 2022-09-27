@@ -64,12 +64,20 @@ namespace API.GiamKichSan
 
 			app.UseAuthorization();
 
-			app.UseCors("AllowOrigin");
+			app.UseCors(builder =>
+			{
+				builder.WithOrigins("http://localhost:37542")
+					.AllowAnyHeader()
+					.WithMethods("GET")
+					.AllowCredentials();
+			});
 			app.UseEndpoints(endpoints =>
 			{
-				endpoints.MapHub<SignalrHub>("/signalr");
+				endpoints.MapHub<SignalrHub>("/signalr/hub");
+				endpoints.MapHub<SignalRMesage>("/signalr/message");
 				endpoints.MapControllers();
 			});
+			app.UseCors("AllowOrigin");
 		}
 	}
 }

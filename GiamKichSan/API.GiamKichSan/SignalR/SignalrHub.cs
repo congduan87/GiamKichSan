@@ -12,10 +12,8 @@ namespace API.GiamKichSan.SignalR
 		Task BroadcastMessage(MessageModel msg);
 	}
 
-	[EnableCors("AllowOrigin")]
 	public class SignalrHub : Hub<IHubClient>
 	{
-		[EnableCors("AllowOrigin")]
 		public async Task BroadcastMessage(MessageModel msg)
 		{
 			await Clients.All.BroadcastMessage(msg);
