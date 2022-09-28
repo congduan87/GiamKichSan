@@ -72,13 +72,15 @@ namespace API.GiamKichSan.Common
 			return fileName;
 		}
 
-		public static async Task<byte[]> DownLoadFile(FTPModel fTPModel, string fileName, string directory)
+		public static async Task<IFormFile> DownLoadFile(FTPModel fTPModel, string fileName, string directory)
 		{
+			if (string.IsNullOrWhiteSpace(fileName)) return null;
 			var fTPUploadFile = new FTPUploadFile(fTPModel);
 			var output = await fTPUploadFile.FileStreamDownload(Path.Combine(directory, fileName));
 			if (output.isValidate && output.arrObj != null)
 			{
-				return output.obj as byte[];
+				var stream = new MemoryStream(output.arrObj);
+				return new FormFile(stream, 0, stream.Length, fileName.Substring(fileName.LastIndexOf('.')), fileName); 
 			}
 			return null;
 		}

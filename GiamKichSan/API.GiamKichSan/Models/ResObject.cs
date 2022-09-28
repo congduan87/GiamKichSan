@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace API.GiamKichSan.Models
 {
-	public class ResObject
+	public class ResObject<T>
 	{
 		private const string _validate = "00";
 		public String codeError { get; set; }
 		public String strError { get; set; }
-		public Object obj { get; set; }
-		public Object listObj { get; set; }
-		public Object arrObj { get; set; }
+		public T obj { get; set; }
+		public List<T> listObj { get; set; }
+		public T[] arrObj { get; set; }
 
 		public ResObject()
 		{

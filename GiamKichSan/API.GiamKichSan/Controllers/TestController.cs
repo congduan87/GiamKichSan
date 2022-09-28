@@ -53,7 +53,7 @@ namespace API.GiamKichSan.Controllers
 		}
 
 		[HttpPut]
-		public async Task<byte[]> Pust(string fileName)
+		public async Task<IFormFile> Pust(string fileName)
 		{
 			return await Helpers.DownLoadFile(_settings, fileName, "DuanVC");
 		}

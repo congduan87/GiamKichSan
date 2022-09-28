@@ -36,9 +36,9 @@ namespace API.GiamKichSan.UploadFile
 		}
 		#endregion
 
-		public ResObject ExistsDirectory(string fileFolder = "")
+		public ResObject<bool> ExistsDirectory(string fileFolder = "")
 		{
-			ResObject output = new ResObject();
+			ResObject<bool> output = new ResObject<bool>();
 			try
 			{
 				if (fileFolder.Trim() == "")
@@ -63,9 +63,9 @@ namespace API.GiamKichSan.UploadFile
 			return output;
 		}
 
-		public ResObject CreateDirectory(string directory)
+		public ResObject<bool> CreateDirectory(string directory)
 		{
-			ResObject output = new ResObject();
+			ResObject<bool> output = new ResObject<bool>();
 			try
 			{
 				output = ExistsDirectory(directory);
@@ -102,9 +102,9 @@ namespace API.GiamKichSan.UploadFile
 			return output;
 		}
 
-		public ResObject CreateDirectories(string directory)
+		public ResObject<bool> CreateDirectories(string directory)
 		{
-			ResObject output = new ResObject();
+			ResObject<bool> output = new ResObject<bool>();
 			output = ExistsDirectory(directory);
 			if (output.isValidate && Convert.ToBoolean(output.obj))
 			{
@@ -128,9 +128,9 @@ namespace API.GiamKichSan.UploadFile
 			return output;
 		}
 
-		public async Task<ResObject> FileUpload(Stream fileStream, string fileName, string directoryServer)
+		public async Task<ResObject<bool>> FileUpload(Stream fileStream, string fileName, string directoryServer)
 		{
-			ResObject output = new ResObject() { obj = false };
+			ResObject<bool> output = new ResObject<bool>() { obj = false };
 			try
 			{
 				if (fileStream == null)
@@ -174,14 +174,14 @@ namespace API.GiamKichSan.UploadFile
 			return output;
 		}
 
-		public async Task<ResObject> FileUpload(FileStream fileStream, string directoryServer)
+		public async Task<ResObject<bool>> FileUpload(FileStream fileStream, string directoryServer)
 		{
 			return await FileUpload(fileStream as Stream, fileStream.Name, directoryServer);
 		}
 
-		public async Task<ResObject> FileUpload(string UploadURL, string directoryServer)
+		public async Task<ResObject<bool>> FileUpload(string UploadURL, string directoryServer)
 		{
-			ResObject output = new ResObject() { obj = false };
+			ResObject<bool> output = new ResObject<bool>() { obj = false };
 			try
 			{
 				if (string.IsNullOrEmpty(UploadURL))
@@ -203,9 +203,9 @@ namespace API.GiamKichSan.UploadFile
 			return output;
 		}
 
-		public async Task<ResObject> FolderUpload(string UploadURL, string directoryServer)
+		public async Task<ResObject<bool>> FolderUpload(string UploadURL, string directoryServer)
 		{
-			ResObject output = new ResObject() { obj = false };
+			ResObject<bool> output = new ResObject<bool>() { obj = false };
 			try
 			{
 				if (string.IsNullOrEmpty(UploadURL))
@@ -233,9 +233,9 @@ namespace API.GiamKichSan.UploadFile
 			return output;
 		}
 
-		public async Task<ResObject> FileStreamDownload(string downloadURL)
+		public async Task<ResObject<byte>> FileStreamDownload(string downloadURL)
 		{
-			ResObject output = new ResObject() { arrObj = null };
+			ResObject<byte> output = new ResObject<byte>();
 
 			try
 			{
@@ -277,9 +277,9 @@ namespace API.GiamKichSan.UploadFile
 			return output;
 		}
 
-		public ResObject FolderDownload(string DownloadURL, string ClientURL)
+		public ResObject<bool> FolderDownload(string DownloadURL, string ClientURL)
 		{
-			ResObject output = new ResObject() { obj = false };
+			ResObject<bool> output = new ResObject<bool>() { obj = false };
 			try
 			{
 				if (string.IsNullOrEmpty(DownloadURL))
@@ -334,9 +334,9 @@ namespace API.GiamKichSan.UploadFile
 			return output;
 		}
 
-		public ResObject FileDownload(string DownloadURL, string ClientURL, string FileName = "")
+		public ResObject<bool> FileDownload(string DownloadURL, string ClientURL, string FileName = "")
 		{
-			ResObject output = new ResObject() { obj = false };
+			ResObject<bool> output = new ResObject<bool>() { obj = false };
 			try
 			{
 				if (string.IsNullOrEmpty(DownloadURL))
