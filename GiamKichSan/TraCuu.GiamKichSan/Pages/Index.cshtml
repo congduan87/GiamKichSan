@@ -52,3 +52,205 @@
         </tbody>
     </table>
 </div>
+<button type="button" id="TestAPI">Alert</button>
+
+<div class="container">
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-2">User</div>
+        <div class="col-4"><input type="text" id="userInput" /></div>
+    </div>
+    <div class="row">
+        <div class="col-2">Message</div>
+        <div class="col-4"><input type="text" id="messageInput" /></div>
+    </div>
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-6">
+            <input type="button" id="sendButton" value="Send Message" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <ul id="messagesList"></ul>
+    </div>
+</div>
+
+<form enctype="multipart/form-data" method="post">
+    <dl>
+        <dt>
+            <label>FileUpload</label>
+        </dt>
+        <dd>
+            <input type="file" name="formFile" />
+        </dd>
+    </dl>
+    <button type="button" name="btnOK" id="btnOK">OK</button>
+</form>
+
+<button type="button" name="btnDownload" id="btnDownload">Download</button>
+<input type="hidden" name="fileUpload" />
+
+@section scripts{
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script>
+        $('#btnOK').click(function () {
+            var formData = new FormData();
+            $("input[name='formFile']").each(function (inx, tag) {
+                for (var i = 0; i < tag.files.length; i++) {
+                    formData.append(tag.name, tag.files[i]);
+                    $('input[name=fileUpload]').val(tag.files[i].name);
+                }
+            });
+            $.ajax({
+                url: 'http://localhost:38308/Blog/Test',
+                type: 'POST',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (data, textStatus, xhr) {
+                    console.log(data);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log('Error in Operation');
+                }
+            });
+        });
+
+        $('#btnDownload').click(function () {
+            var fileName = $('input[name = fileUpload]').val();
+            $.ajax({
+                type: "PUT",
+                url: 'http://localhost:38308/Blog/Test?fileName=' + fileName,
+                cache: false,
+                xhr: function () {
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 2) {
+                            if (xhr.status == 200) {
+                                xhr.responseType = "blob";
+                            } else {
+                                xhr.responseType = "text";
+                            }
+                        }
+                    };
+                    return xhr;
+                },
+                success: function (data) {
+                    //Convert the Byte Data to BLOB object.
+                    var blob = new Blob([data], { type: "application/octetstream" });
+
+                    //Check the Browser type and download the File.
+                    var isIE = false || !!document.documentMode;
+                    if (isIE) {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        var url = window.URL || window.webkitURL;
+                        link = url.createObjectURL(blob);
+                        var a = $("<a />");
+                        a.attr("download", fileName);
+                        a.attr("href", link);
+                        $("body").append(a);
+                        a[0].click();
+                        $("body").remove(a);
+                    }
+                }
+            });
+        });
+
+
+        $(document).ready(function () {
+            var connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:38308/signalr/message").build();
+
+            //Disable the send button until connection is established.
+            document.getElementById("sendButton").disabled = true;
+
+            connection.on("ReceiveMessage", function (user, Message) {
+                var li = document.createElement("li");
+                document.getElementById("messagesList").appendChild(li);
+                // We can assign user-supplied strings to an element's textContent because it
+                // is not interpreted as markup. If you're assigning in any other way, you
+                // should be aware of possible script injection concerns.
+                li.textContent = `${user} says ${Message}`;
+            });
+
+            connection.start().then(function () {
+                document.getElementById("sendButton").disabled = false;
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            document.getElementById("sendButton").addEventListener("click", function (event) {
+                var user = document.getElementById("userInput").value;
+                var message = document.getElementById("messageInput").value;
+                connection.invoke("SendMessage", user, message).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                event.preventDefault();
+            });
+        });
+
+
+        $(document).ready(function () {
+
+            var connection1 = new signalR.HubConnectionBuilder().withUrl("http://localhost:38308/signalr/hub").build();
+            connection1.on("BroadcastMessage", function (user) {
+                var li = document.createElement("li");
+                document.getElementById("messagesList").appendChild(li);
+                // We can assign user-supplied strings to an element's textContent because it
+                // is not interpreted as markup. If you're assigning in any other way, you
+                // should be aware of possible script injection concerns.
+                li.textContent = `${user.timestamp} says ${user.message}`;
+            });
+
+            connection1.start().then(function () {
+                alert('cap nhat thanh cong');
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+
+            document.getElementById("TestAPI").addEventListener("click", function (event) {
+                var user = document.getElementById("userInput").value;
+                var message = document.getElementById("messageInput").value;
+                connection1.invoke("BroadcastMessage", {
+                    "From": "123456",
+                    "Code": "010101",
+                    "Message": message,
+                    "Timestamp": "4563178"
+                }).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                event.preventDefault();
+            });
+        });
+
+            //$('#TestAPI').click(function () {
+            //    $.ajax({
+            //        url: 'http://localhost:38308/Blog/Test',
+            //        type: 'POST',
+            //        contentType: 'application/json',
+            //        data: JSON.stringify({
+            //            "From": "123456",
+            //            "Code": "010101",
+            //            "Message": "toi la Duan",
+            //            "Timestamp": ""
+            //        }),
+            //        success: function (data, textStatus, xhr) {
+            //            console.log(data);
+            //        },
+            //        error: function (xhr, textStatus, errorThrown) {
+            //            console.log('Error in Operation');
+            //        }
+            //    });
+            //});
+
+    </script>
+}

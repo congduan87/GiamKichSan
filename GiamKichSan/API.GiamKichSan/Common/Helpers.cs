@@ -19,12 +19,12 @@ namespace API.GiamKichSan.Common
 		}
 		public static string[] GetFileInFolder(string directoryName, string extention)
 		{
-			return Directory.GetFiles(directoryName).Where(x=>x.EndsWith(extention)).Select(x => x.Split('\\').LastOrDefault().Replace(extention, "")).ToArray();
+			return Directory.GetFiles(directoryName).Where(x => x.EndsWith(extention)).Select(x => x.Split('\\').LastOrDefault().Replace(extention, "")).ToArray();
 		}
 
 		public static string[] GetFolderInFolder(string directoryName)
 		{
-			return Directory.GetDirectories(directoryName).Select(x=>x.Split('\\').LastOrDefault()).ToArray();
+			return Directory.GetDirectories(directoryName).Select(x => x.Split('\\').LastOrDefault()).ToArray();
 		}
 
 		public static string CreateDirectory(string directoryParent, string directoryName)
@@ -63,13 +63,24 @@ namespace API.GiamKichSan.Common
 			if (formFile.Length > 0)
 			{
 				var fTPUploadFile = new FTPUploadFile(fTPModel);
-				var output = await fTPUploadFile.FileUpload(formFile.OpenReadStream(), formFile.Name, directory);
-				if(output.isValidate && Convert.ToBoolean(output.obj))
+				var output = await fTPUploadFile.FileUpload(formFile.OpenReadStream(), formFile.FileName, directory);
+				if (output.isValidate && Convert.ToBoolean(output.obj))
 				{
 					fileName = Path.Combine(directory, formFile.FileName);
 				}
 			}
 			return fileName;
+		}
+
+		public static async Task<byte[]> DownLoadFile(FTPModel fTPModel, string fileName, string directory)
+		{
+			var fTPUploadFile = new FTPUploadFile(fTPModel);
+			var output = await fTPUploadFile.FileStreamDownload(Path.Combine(directory, fileName));
+			if (output.isValidate && output.arrObj != null)
+			{
+				return output.obj as byte[];
+			}
+			return null;
 		}
 	}
 }

@@ -13,25 +13,43 @@ namespace API.GiamKichSan.UploadFile
 	public class FTPUploadFile
 	{
 		private FTPModel fTPModel { get; set; }
-		public FTPUploadFile(IConfiguration config)
-		{
-			fTPModel = config.GetValue<FTPModel>("FTPUpload");
-		}
 		public FTPUploadFile(FTPModel fTPModel)
 		{
 			this.fTPModel = fTPModel;
 		}
+
+		#region PrivateCommon
+		private FtpWebRequest InitFTPWebRequest(string path, string webRequestMethod)
+		{
+			FtpWebRequest request = (FtpWebRequest)WebRequest.Create(string.Format("ftp://{0}/{1}", fTPModel.Server, path));
+			request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.CacheIfAvailable);
+			request.Method = webRequestMethod;
+			request.Credentials = new NetworkCredential(fTPModel.Username, fTPModel.Password);
+			request.KeepAlive = false;
+			request.UseBinary = true;
+			request.UsePassive = true;
+			return request;
+		}
+		private string[] GetDirectoriesInPath(string pathDirectory)
+		{
+			return pathDirectory.Replace("/", "\\").Split('\\');
+		}
+		#endregion
+
 		public ResObject ExistsDirectory(string fileFolder = "")
 		{
 			ResObject output = new ResObject();
 			try
 			{
-				FtpWebRequest request = (FtpWebRequest)WebRequest.Create(string.Format("ftp://{0}/{1}", fTPModel.Server, fileFolder));
-				request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-				request.Credentials = new NetworkCredential(fTPModel.Username, fTPModel.Password);
-				request.KeepAlive = false;
-				request.UseBinary = true;
-				request.UsePassive = true;
+				if (fileFolder.Trim() == "")
+				{
+					output.obj = false;
+					output.codeError = "-1";
+					output.strError = "Không tồn tại thư mục";
+					return output;
+				}
+
+				FtpWebRequest request = InitFTPWebRequest(fileFolder, WebRequestMethods.Ftp.ListDirectory);
 				FtpWebResponse response = (FtpWebResponse)request.GetResponse();
 				response.Close();
 				output.obj = true;
@@ -39,8 +57,8 @@ namespace API.GiamKichSan.UploadFile
 			catch (Exception ex)
 			{
 				output.obj = false;
-				output.codeError = "99";
-				output.strError = string.Format("FTPUploadFile_ExistsDirectory: {0}", ex.ToString());
+				Console.WriteLine(string.Format("FTPUploadFile_ExistsDirectory: {0}", ex.ToString()));
+
 			}
 			return output;
 		}
@@ -56,55 +74,11 @@ namespace API.GiamKichSan.UploadFile
 					return output;
 				}
 
-				var listDirectory = new List<String>();
-				var arrayDirectory = directory.Replace("/", "\\").Split('\\').ToList<String>();
-
-				var newDirectory = "";
-				var indexRemove = 0;
-				var indexError = 0;
-
-				while (arrayDirectory.Count > 0)
-				{
-					newDirectory = "";
-					indexRemove = arrayDirectory.Count - 1;
-					if (!string.IsNullOrEmpty(arrayDirectory[indexRemove]))
-					{
-						newDirectory = Path.Combine(string.Join("\\", arrayDirectory));
-						output = ExistsDirectory(newDirectory);
-						if (output.isValidate && Convert.ToBoolean(output.obj))
-						{
-							break;
-						}
-					}
-					listDirectory.Add(newDirectory);
-					arrayDirectory.RemoveAt(indexRemove);
-
-					indexError++;
-					if (indexError > 200)
-					{
-						throw new Exception("Function is looped");
-					}
-				}
-
-				for (int i = listDirectory.Count; i > 0; i--)
-				{
-					if (!string.IsNullOrEmpty(listDirectory[i - 1]))
-					{
-						FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(new Uri(string.Format("ftp://{0}/{1}", fTPModel.Server, listDirectory[i - 1])));
-						request.Method = WebRequestMethods.Ftp.MakeDirectory;
-						request.Credentials = new NetworkCredential(fTPModel.Username, fTPModel.Password);
-						request.UsePassive = true;
-						request.UseBinary = true;
-						request.KeepAlive = false;
-
-						FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-						Stream ftpStream = response.GetResponseStream();
-
-						ftpStream.Close();
-						response.Close();
-					}
-				}
-
+				FtpWebRequest request = InitFTPWebRequest(directory, WebRequestMethods.Ftp.MakeDirectory);
+				FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+				Stream ftpStream = response.GetResponseStream();
+				ftpStream.Close();
+				response.Close();
 				output.obj = true;
 			}
 			catch (WebException ex)
@@ -125,7 +99,32 @@ namespace API.GiamKichSan.UploadFile
 				output.codeError = "99";
 				output.strError = string.Format("FTPUploadFile_CreateDirectory: {0}", ex.ToString());
 			}
+			return output;
+		}
 
+		public ResObject CreateDirectories(string directory)
+		{
+			ResObject output = new ResObject();
+			output = ExistsDirectory(directory);
+			if (output.isValidate && Convert.ToBoolean(output.obj))
+			{
+				return output;
+			}
+
+			var arrDirectory = GetDirectoriesInPath(directory);
+			var currentDirectory = "";
+			for (int indexDirectory = arrDirectory.Length - 1; indexDirectory >= 0; indexDirectory--)
+			{
+				if (!string.IsNullOrEmpty(arrDirectory[indexDirectory]))
+				{
+					currentDirectory = string.IsNullOrWhiteSpace(currentDirectory) ? arrDirectory[indexDirectory] : Path.Combine(currentDirectory, arrDirectory[indexDirectory]);
+					output = CreateDirectory(currentDirectory);
+					if (!output.isValidate || !Convert.ToBoolean(output.obj))
+					{
+						return output;
+					}
+				}
+			}
 			return output;
 		}
 
@@ -136,20 +135,21 @@ namespace API.GiamKichSan.UploadFile
 			{
 				if (fileStream == null)
 				{
-					throw new Exception("fileName is null");
+					throw new Exception("File is null");
 				}
 
-				output = CreateDirectory(directoryServer);
+				if (fileName == null)
+				{
+					throw new Exception("FileName is null");
+				}
+
+				output = CreateDirectories(directoryServer);
 				if (!output.isValidate || !Convert.ToBoolean(output.obj))
 				{
 					return output;
 				}
 
-				FtpWebRequest request = (FtpWebRequest)WebRequest.Create(string.Format("ftp://{0}/{1}/{2}", fTPModel.Server, directoryServer, fileName));
-				request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.CacheIfAvailable);
-				request.Method = WebRequestMethods.Ftp.UploadFile;
-				request.Credentials = new NetworkCredential(fTPModel.Username, fTPModel.Password);
-
+				FtpWebRequest request = InitFTPWebRequest(Path.Combine(directoryServer, fileName), WebRequestMethods.Ftp.UploadFile);
 				Stream requestStream = request.GetRequestStream();
 				await fileStream.CopyToAsync(requestStream);
 				requestStream.Close();
@@ -174,90 +174,68 @@ namespace API.GiamKichSan.UploadFile
 			return output;
 		}
 
-		public ResObject FileUpload(FileStream fileStream, string directoryServer)
+		public async Task<ResObject> FileUpload(FileStream fileStream, string directoryServer)
+		{
+			return await FileUpload(fileStream as Stream, fileStream.Name, directoryServer);
+		}
+
+		public async Task<ResObject> FileUpload(string UploadURL, string directoryServer)
 		{
 			ResObject output = new ResObject() { obj = false };
-
 			try
 			{
-				if (fileStream == null)
+				if (string.IsNullOrEmpty(UploadURL))
 				{
-					throw new Exception("fileName is null");
-				}
-
-				output = CreateDirectory(directoryServer);
-				if (!output.isValidate || Convert.ToBoolean(output.obj))
-				{
+					output.obj = false;
+					output.codeError = "-1";
+					output.strError = "UploadURL is null";
 					return output;
 				}
 
-				FtpWebRequest request = (FtpWebRequest)WebRequest.Create(string.Format("ftp://{0}/{1}/{2}", fTPModel.Server, directoryServer, fileStream.Name));
-				request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.CacheIfAvailable);
-				request.Method = WebRequestMethods.Ftp.UploadFile;
-				request.Credentials = new NetworkCredential(fTPModel.Username, fTPModel.Password);
-
-				Stream requestStream = request.GetRequestStream();
-				fileStream.CopyTo(requestStream);
-				requestStream.Close();
-				fileStream.Close();
-
-				FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-				Console.WriteLine("Upload File Complete, status {0}", response.StatusDescription);
-				response.Close();
-				output.obj = true;
-			}
-			catch (WebException e)
-			{
-				String status = ((FtpWebResponse)e.Response).StatusDescription;
-				output.codeError = "99";
-				output.strError = string.Format("FTPUploadFile_FileUpload {0}: {1} \n {1}", fileStream.Name, status, e.ToString());
+				FileStream fileStream = File.OpenRead(UploadURL);
+				return await FileUpload(fileStream, directoryServer);
 			}
 			catch (Exception ex)
 			{
 				output.codeError = "99";
-				output.strError = string.Format("FTPUploadFile_FolderUpload: {0}", ex.ToString());
+				output.strError = string.Format("FTPUploadFile_FileUpload: {0}", ex.ToString());
 			}
 			return output;
 		}
 
-		public ResObject FileUpload(string UploadURL, string directoryServer)
+		public async Task<ResObject> FolderUpload(string UploadURL, string directoryServer)
 		{
 			ResObject output = new ResObject() { obj = false };
-
-			if (string.IsNullOrEmpty(UploadURL))
+			try
 			{
-				throw new Exception("fileName is null");
-			}
-
-			FileStream fileStream = File.OpenRead(UploadURL);
-			output = FileUpload(fileStream, directoryServer);
-
-			return output;
-		}
-
-		public ResObject FolderUpload(string UploadURL, string directoryServer)
-		{
-			ResObject output = new ResObject() { obj = false };
-
-			if (string.IsNullOrEmpty(UploadURL))
-			{
-				throw new Exception("fileName is null");
-			}
-
-			foreach (var itemUrl in Directory.GetFiles(UploadURL))
-			{
-				output = FileUpload(itemUrl, directoryServer);
-				if (!output.isValidate || !Convert.ToBoolean(output.obj))
+				if (string.IsNullOrEmpty(UploadURL))
 				{
-					break;
+					output.obj = false;
+					output.codeError = "-1";
+					output.strError = "UploadURL is null";
+					return output;
+				}
+
+				foreach (var itemUrl in Directory.GetFiles(UploadURL))
+				{
+					output = await FileUpload(itemUrl, directoryServer);
+					if (!output.isValidate)
+					{
+						break;
+					}
 				}
 			}
+			catch (Exception ex)
+			{
+				output.codeError = "99";
+				output.strError = string.Format("FTPUploadFile_FileUpload: {0}", ex.ToString());
+			}
 			return output;
 		}
 
-		public ResObject FileStreamDownload(string downloadURL)
+		public async Task<ResObject> FileStreamDownload(string downloadURL)
 		{
-			ResObject output = new ResObject() { obj = null };
+			ResObject output = new ResObject() { arrObj = null };
 
 			try
 			{
@@ -265,21 +243,10 @@ namespace API.GiamKichSan.UploadFile
 				{
 					throw new Exception("fileName is null");
 				}
-				downloadURL = downloadURL.TrimStart(new char[] { '\\', '/' });
-				var nameFile = downloadURL.Replace("\\", "/").Split('/');
 
-				FtpWebRequest request = (FtpWebRequest)WebRequest.Create(string.Format("ftp://{0}/{1}", fTPModel.Server, downloadURL));
-				request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.CacheIfAvailable);
-				request.Method = WebRequestMethods.Ftp.DownloadFile;
-				request.Credentials = new NetworkCredential(fTPModel.Username, fTPModel.Password);
-
-				request.KeepAlive = false;
-				request.UseBinary = true;
-				request.UsePassive = true;
-
+				FtpWebRequest request = InitFTPWebRequest(downloadURL, WebRequestMethods.Ftp.DownloadFile);
 				FtpWebResponse response = (FtpWebResponse)request.GetResponse();
 				Stream responseStream = response.GetResponseStream();
-
 				if (responseStream is MemoryStream)
 				{
 					output.arrObj = ((MemoryStream)responseStream).ToArray();
@@ -288,14 +255,12 @@ namespace API.GiamKichSan.UploadFile
 				{
 					using (var memoryStream = new MemoryStream())
 					{
-						responseStream.CopyTo(memoryStream);
+						await responseStream.CopyToAsync(memoryStream);
 						output.arrObj = memoryStream.ToArray();
 					}
 				}
-
 				responseStream.Dispose();
 				responseStream.Close();
-
 				response.Close();
 			}
 			catch (WebException e)
@@ -325,7 +290,7 @@ namespace API.GiamKichSan.UploadFile
 				if (string.IsNullOrEmpty(ClientURL))
 				{
 					throw new Exception("fileName is null");
-				}				
+				}
 
 				DownloadURL = DownloadURL.TrimStart(new char[] { '\\', '/' });
 

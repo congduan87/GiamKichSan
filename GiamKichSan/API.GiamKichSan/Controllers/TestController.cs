@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace API.GiamKichSan.Controllers
@@ -49,6 +50,12 @@ namespace API.GiamKichSan.Controllers
 		{
 			var retMessage = await Helpers.UploadFile(_settings, formFile, "DuanVC");			
 			return retMessage;
+		}
+
+		[HttpPut]
+		public async Task<byte[]> Pust(string fileName)
+		{
+			return await Helpers.DownLoadFile(_settings, fileName, "DuanVC");
 		}
 
 		private static readonly string[] Summaries = new[]
