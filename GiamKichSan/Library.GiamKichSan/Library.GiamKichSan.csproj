@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Convert\" />
     <Folder Include="SignalR\" />
   </ItemGroup>
 

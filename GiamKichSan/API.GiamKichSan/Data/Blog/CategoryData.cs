@@ -3,7 +3,6 @@ using API.GiamKichSan.Entities.Blog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.GiamKichSan.Data.Blog
 {
@@ -22,10 +21,18 @@ namespace API.GiamKichSan.Data.Blog
 			return CntGlobal.gKSDbContext.SaveChanges() > 0;
 		}
 
-		public bool Delete(CategoryEntity item)
+		public bool Delete(int ID)
 		{
-			CntGlobal.gKSDbContext.Blog_Categories.Remove(item);
-			return CntGlobal.gKSDbContext.SaveChanges() > 0;
+			var item = this.GetByID(ID);
+			if (item != null && item.ID > 0)
+			{
+				CntGlobal.gKSDbContext.Blog_Categories.Remove(item);
+				return CntGlobal.gKSDbContext.SaveChanges() > 0;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		public List<CategoryEntity> GetAll(Func<CategoryEntity, bool> func = null)

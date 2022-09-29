@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.GiamKichSan", "Blog.Gi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.GiamKichSan", "API.GiamKichSan\API.GiamKichSan.csproj", "{57A721A2-8C81-47DC-88D3-D85DA9B32814}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.GiamKichSan", "Library.GiamKichSan\Library.GiamKichSan.csproj", "{E173EFBC-BBB1-4CDF-B126-30A7C8C0E7FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.GiamKichSan", "Library.GiamKichSan\Library.GiamKichSan.csproj", "{E173EFBC-BBB1-4CDF-B126-30A7C8C0E7FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -83,5 +83,10 @@ namespace API.GiamKichSan.Common
 			}
 			return null;
 		}
+
+		public static void CopyData<T1, T2>(T1 item1, T2 item2)
+		{
+
+		}
 	}
 }

@@ -104,8 +104,9 @@
             var formData = new FormData();
             $("input[name='formFile']").each(function (inx, tag) {
                 for (var i = 0; i < tag.files.length; i++) {
-                    formData.append(tag.name, tag.files[i]);
+                    formData.append(tag.name, tag.files[i]);                    
                     $('input[name=fileUpload]').val(tag.files[i].name);
+                    $('input[name=fileUpload]').attr('cust-type', tag.files[i].type );
                 }
             });
             $.ajax({
@@ -126,9 +127,10 @@
 
         $('#btnDownload').click(function () {
             var fileName = $('input[name = fileUpload]').val();
+            var typeFile = $('input[name = fileUpload]').attr('cust-type');
             $.ajax({
                 type: "PUT",
-                url: 'http://localhost:38308/Blog/Test?fileName=' + fileName,
+                url: 'http://localhost:38308/Blog/Test?fileName=' + fileName + '&typeFile=' + typeFile,
                 cache: false,
                 xhr: function () {
                     var xhr = new XMLHttpRequest();
