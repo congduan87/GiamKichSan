@@ -46,6 +46,7 @@ namespace API.GiamKichSan.Controllers
 		//}
 
 		[HttpPost]
+		[RequestFormLimits(MultipartBodyLengthLimit = Common.CntGlobal.MaxLengthUploadFile)]
 		public async Task<string> Post(IFormFile formFile)
 		{
 			var retMessage = await Helpers.UploadFile(_settings, formFile, "DuanVC");			
@@ -53,9 +54,10 @@ namespace API.GiamKichSan.Controllers
 		}
 
 		[HttpPut]
-		public async Task<IFormFile> Pust(string fileName)
+		public async Task<FileContentResult> Pust(string fileName, string typeFile)
 		{
-			return await Helpers.DownLoadFile(_settings, fileName, "DuanVC");
+			var fileContent = await Helpers.DownLoadFile(_settings, fileName, "DuanVC");
+			return File(fileContent, typeFile);
 		}
 
 		private static readonly string[] Summaries = new[]
