@@ -1,4 +1,5 @@
-﻿using API.GiamKichSan.Data.Blog;
+﻿using API.GiamKichSan.Common;
+using API.GiamKichSan.Data;
 using API.GiamKichSan.Entities.Blog;
 using API.GiamKichSan.Models.Blog;
 using API.GiamKichSan.Param.Blog;
@@ -12,39 +13,36 @@ namespace API.GiamKichSan.Controllers.Blog
 	[Route("Blog/[controller]")]
 	public class CategoryController : ControllerBase
 	{
-		private CategoryData categoryData { get; set; }
-		public CategoryController()
+		private CategoryServices categoryServices { get; set; }
+		public CategoryController(GKSDbContext gKSDbContext)
 		{
-			this.categoryData = new CategoryData();
+			CntGlobal.gKSDbContext = gKSDbContext;
+			this.categoryServices = new CategoryServices();
 		}
 		[HttpGet]
-		public IEnumerable<CategoryModel> GetAll(CategoryTerm param)
+		public IEnumerable<CategoryModel> GetAll(string name)
 		{
-			return this.categoryData.GetAll(x => (param.ID.Equals(0) || x.ID.Equals(param.ID)) && (param.IDParent == null || x.IDParent.Equals(param.IDParent)) && (param.Name == "" || x.Name.Contains(param.Name))).Select(x => CategoryModel.ConvertFromEntity(x));
+			return categoryServices.GetAll(name);
 		}
 		[HttpGet("{id}")]
 		public CategoryModel GetDetail([FromRoute] int id)
 		{
-			return this.categoryData.GetAll(x => x.ID == id).Select(x => CategoryModel.ConvertFromEntity(x)).FirstOrDefault();
+			return categoryServices.GetByID(id);
 		}
 		[HttpPost]
-		public int Insert(CategoryEntity item)
+		public int Insert(CategoryInsertParam item)
 		{
-			var entity = new CategoryEntity()
-			{
-
-			};
-			return this.categoryData.Insert(item);
+			return categoryServices.Insert(item);
 		}
 		[HttpPut("{id}")]
-		public bool Edit([FromRoute] int id, [FromBody] CategoryEntity item)
+		public bool Edit([FromRoute] int id, [FromBody] CategoryUpdateParam item)
 		{
-			return this.categoryData.Edit(item);
+			return categoryServices.Edit(item);
 		}
 		[HttpDelete]
 		public bool Delete([FromRoute] int id)
 		{
-			return this.categoryData.Delete(id);
+			return categoryServices.Delete(id);
 		}
 	}
 }

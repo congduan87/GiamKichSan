@@ -79,14 +79,32 @@ namespace API.GiamKichSan.Common
 			var output = await fTPUploadFile.FileStreamDownload(Path.Combine(directory, fileName));
 			if (output.isValidate && output.arrObj != null)
 			{
-				return output.arrObj; 
+				return output.arrObj;
 			}
 			return null;
 		}
 
-		public static void CopyData<T1, T2>(T1 item1, T2 item2)
+		public static void CopyData<T1, T2>(T1 itemSource, T2 itemOut)
 		{
+			Type typeT1 = typeof(T1);
+			Type typeT2 = typeof(T2);
 
+			// using GetProperties() Method
+			System.Reflection.PropertyInfo[] typearrayT1 = typeT1.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+			System.Reflection.PropertyInfo[] typearrayT2 = typeT2.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+
+			// Display the Result
+			foreach (var proT2 in typearrayT2)
+			{
+				foreach (var proT1 in typearrayT1)
+				{
+					if (proT2.Name == proT1.Name)
+					{
+						proT2.SetValue(itemOut, proT1.GetValue(itemSource));
+						break;
+					}
+				}
+			}
 		}
 	}
 }

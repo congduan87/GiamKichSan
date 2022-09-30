@@ -8,9 +8,5 @@ namespace API.GiamKichSan.Models.Blog
 		{
 
 		}
-		public static CategoryModel ConvertFromEntity(CategoryEntity entity)
-		{
-			return entity as CategoryModel;
-		}
 	}
 }
