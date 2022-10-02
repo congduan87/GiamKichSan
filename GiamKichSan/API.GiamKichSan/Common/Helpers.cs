@@ -1,7 +1,7 @@
 ﻿using API.GiamKichSan.UploadFile;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -84,21 +84,44 @@ namespace API.GiamKichSan.Common
 			return null;
 		}
 
-		public static void CopyData<T1, T2>(T1 itemSource, T2 itemOut)
+		public static List<System.Reflection.PropertyInfo> GetProperties<T>(T obj)
 		{
-			Type typeT1 = typeof(T1);
-			Type typeT2 = typeof(T2);
+			return typeof(T).GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public).ToList();
+		}
 
-			// using GetProperties() Method
-			System.Reflection.PropertyInfo[] typearrayT1 = typeT1.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-			System.Reflection.PropertyInfo[] typearrayT2 = typeT2.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+		public static List<System.Reflection.PropertyInfo> GetPropertiesInsert<T>(T obj)
+		{
+			return GetProperties(obj).FindAll(x => x.Name != "IPEdit" && x.Name != "DateEdit" && x.Name != "ID");
+		}
 
+		public static List<System.Reflection.PropertyInfo> GetPropertiesUpdate<T>(T obj)
+		{
+			return GetProperties(obj).FindAll(x => x.Name != "IPCreate" && x.Name != "DateCreate");
+		}
+
+		public static void CopyToDataInsert<T1, T2>(T1 itemSource, ref T2 itemOut)
+		{
 			// Display the Result
-			foreach (var proT2 in typearrayT2)
+			foreach (var proT2 in GetPropertiesInsert(itemOut))
 			{
-				foreach (var proT1 in typearrayT1)
+				foreach (var proT1 in GetPropertiesInsert(itemSource))
 				{
-					if (proT2.Name == proT1.Name)
+					if (proT2.Name == proT1.Name && proT1.GetValue(itemSource) != null)
+					{
+						proT2.SetValue(itemOut, proT1.GetValue(itemSource));
+						break;
+					}
+				}
+			}
+		}
+		public static void CopyToDataUpdate<T1, T2>(T1 itemSource, ref T2 itemOut)
+		{
+			// Display the Result
+			foreach (var proT2 in GetPropertiesUpdate(itemOut))
+			{
+				foreach (var proT1 in GetPropertiesUpdate(itemSource))
+				{
+					if (proT2.Name == proT1.Name && proT1.GetValue(itemSource) != null)
 					{
 						proT2.SetValue(itemOut, proT1.GetValue(itemSource));
 						break;
