@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace API.GiamKichSan.Data.Search
 {
-	public class CommunityMediaData
+	public class CommunityMediaData : IData<CommunityMediaEntity, CommunityMediaEntity>
 	{
 		public int Insert(CommunityMediaEntity item)
 		{
@@ -21,10 +21,18 @@ namespace API.GiamKichSan.Data.Search
 			return CntGlobal.gKSDbContext.SaveChanges() > 0;
 		}
 
-		public bool Delete(CommunityMediaEntity item)
+		public bool Delete(int ID)
 		{
-			CntGlobal.gKSDbContext.Search_CommunityMediaEntities.Remove(item);
-			return CntGlobal.gKSDbContext.SaveChanges() > 0;
+			var item = GetByID(ID);
+			if (item != null && item.ID > 0)
+			{
+				CntGlobal.gKSDbContext.Search_CommunityMediaEntities.Remove(item);
+				return CntGlobal.gKSDbContext.SaveChanges() > 0;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		public List<CommunityMediaEntity> GetAll(Func<CommunityMediaEntity, bool> func = null)

@@ -99,8 +99,28 @@ namespace API.GiamKichSan.Common
 			return GetProperties(obj).FindAll(x => x.Name != "IPCreate" && x.Name != "DateCreate");
 		}
 
+		public static T2 CopyToData<T1, T2>(T1 itemSource, T2 itemOut)
+		{
+			if (itemSource == null) return default(T2);
+			// Display the Result
+			foreach (var proT2 in GetProperties(itemOut))
+			{
+				foreach (var proT1 in GetProperties(itemSource))
+				{
+					if (proT2.Name == proT1.Name && proT1.GetValue(itemSource) != null)
+					{
+						proT2.SetValue(itemOut, proT1.GetValue(itemSource));
+						break;
+					}
+				}
+			}
+
+			return itemOut;
+		}
+
 		public static void CopyToDataInsert<T1, T2>(T1 itemSource, ref T2 itemOut)
 		{
+			if (itemSource == null) return;
 			// Display the Result
 			foreach (var proT2 in GetPropertiesInsert(itemOut))
 			{
@@ -116,6 +136,7 @@ namespace API.GiamKichSan.Common
 		}
 		public static void CopyToDataUpdate<T1, T2>(T1 itemSource, ref T2 itemOut)
 		{
+			if (itemSource == null) return;
 			// Display the Result
 			foreach (var proT2 in GetPropertiesUpdate(itemOut))
 			{

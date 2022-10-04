@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="IData\**" />
+    <Compile Remove="Param\**" />
+    <Content Remove="IData\**" />
+    <Content Remove="Param\**" />
+    <EmbeddedResource Remove="IData\**" />
+    <EmbeddedResource Remove="Param\**" />
+    <None Remove="IData\**" />
+    <None Remove="Param\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Data\Blog\BlogDbContext.cs" />
     <Compile Remove="Data\Search\SearchDbContext.cs" />
   </ItemGroup>

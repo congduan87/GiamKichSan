@@ -1,13 +1,13 @@
 ﻿using API.GiamKichSan.Common;
 using API.GiamKichSan.Data;
-using API.GiamKichSan.Data.Blog;
-using API.GiamKichSan.Entities.Blog;
-using API.GiamKichSan.Models.Blog;
+using API.GiamKichSan.Data.Search;
+using API.GiamKichSan.Entities.Search;
+using API.GiamKichSan.Models.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace API.GiamKichSan.Param.Blog
+namespace API.GiamKichSan.Services.Search
 {
 	public class CategoryServices : IData<CategoryModel, CategoryEntity>
 	{
