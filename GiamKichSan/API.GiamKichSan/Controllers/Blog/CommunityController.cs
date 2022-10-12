@@ -37,7 +37,7 @@ namespace API.GiamKichSan.Controllers.Blog
 		{
 			return communityServices.Edit(item);
 		}
-		[HttpDelete]
+		[HttpDelete("{id}")]
 		public bool Delete([FromRoute] int id)
 		{
 			return communityServices.Delete(id);
